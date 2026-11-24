@@ -26,6 +26,7 @@ make train-tiny  # GPTの動作確認 (数十秒)
 make train       # GPT学習 + 生成 (CPUで約2分, val loss ≒ 1.8)
 make train-full  # 動画相当の設定 (GPU推奨, val loss ≒ 1.5)
 make generate    # 保存済み out/gpt.pt で生成のみ
+make chat        # 学習済みモデルと対話するCLI(入力の続きを生成)
 ```
 
 `make train PRESET=tiny|small|full` でプリセットを切替。データ(tiny shakespeare)は `make data` で自動取得される。

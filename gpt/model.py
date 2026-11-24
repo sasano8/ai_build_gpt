@@ -104,10 +104,11 @@ class GPT(nn.Module):
         return logits, loss
 
     @torch.no_grad()
-    def generate(self, idx, max_new_tokens: int):
+    def generate(self, idx, max_new_tokens: int, temperature: float = 1.0):
+        """temperature が低いほど無難、高いほどランダムな出力になる。"""
         for _ in range(max_new_tokens):
             idx_cond = idx[:, -self.block_size :]  # 文脈長を超えた分は切り捨て
             logits, _ = self(idx_cond)
-            probs = F.softmax(logits[:, -1, :], dim=-1)
+            probs = F.softmax(logits[:, -1, :] / temperature, dim=-1)
             idx = torch.cat([idx, torch.multinomial(probs, 1)], dim=1)
         return idx

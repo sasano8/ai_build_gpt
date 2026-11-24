@@ -2,7 +2,7 @@
 PYTHON  ?= .venv/bin/python
 PRESET  ?= small
 
-.PHONY: help setup data test bigram train train-tiny train-full generate clean
+.PHONY: help setup data test bigram train train-tiny train-full generate chat clean
 
 help:
 	@echo "make setup       venv作成 + PyTorchインストール"
@@ -12,6 +12,7 @@ help:
 	@echo "make train-tiny  GPTを数十秒で動作確認 (preset=tiny)"
 	@echo "make train       GPTを学習・生成 (PRESET=small 既定。tiny/small/full)"
 	@echo "make generate    out/gpt.pt を使って生成のみ"
+	@echo "make chat        out/gpt.pt と対話(続きを生成)するCLI"
 
 setup:
 	python3 -m venv .venv
@@ -39,6 +40,9 @@ train-full:
 
 generate:
 	$(PYTHON) -m gpt.train --model gpt --preset $(PRESET) --generate-only
+
+chat:
+	$(PYTHON) -m gpt.chat --preset $(PRESET)
 
 clean:
 	rm -rf out __pycache__ gpt/__pycache__ .pytest_cache
