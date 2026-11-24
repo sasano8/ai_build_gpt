@@ -1,11 +1,11 @@
 # 使い方: `make help`
-PYTHON  ?= .venv/bin/python
+PYTHON  ?= uv run python
 PRESET  ?= small
 
 .PHONY: help setup data test bigram train train-tiny train-full generate chat clean
 
 help:
-	@echo "make setup       venv作成 + PyTorchインストール"
+	@echo "make setup       uv sync で依存関係インストール(pyproject.toml)"
 	@echo "make data        tiny shakespeare を data/input.txt に取得"
 	@echo "make test        単体テスト"
 	@echo "make bigram      Phase3: Bigramモデルを学習・生成"
@@ -15,8 +15,7 @@ help:
 	@echo "make chat        out/gpt.pt と対話(続きを生成)するCLI"
 
 setup:
-	python3 -m venv .venv
-	.venv/bin/pip install -q torch pytest
+	uv sync
 
 data: data/input.txt
 data/input.txt:

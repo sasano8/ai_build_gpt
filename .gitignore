@@ -3,3 +3,4 @@ out/
 __pycache__/
 .pytest_cache/
 data/input.txt
+*.egg-info/

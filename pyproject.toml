@@ -1,0 +1,24 @@
+[project]
+name = "ai-build-gpt"
+version = "0.1.0"
+description = "Tiny GPT built from scratch with PyTorch"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "torch",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["gpt"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

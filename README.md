@@ -18,8 +18,10 @@ ChatGPTは、この基盤モデルに指示追従・人間のフィードバッ�
 
 ## 使い方
 
+要[uv](https://docs.astral.sh/uv/)。依存関係は `pyproject.toml` で管理し、`uv.lock` で固定している。
+
 ```bash
-make setup       # venv作成 + PyTorchインストール
+make setup       # uv sync で依存関係インストール(pyproject.toml)
 make test        # 単体テスト
 make bigram      # Phase 3: Bigramベースライン (val loss ≒ 2.5)
 make train-tiny  # GPTの動作確認 (数十秒)
