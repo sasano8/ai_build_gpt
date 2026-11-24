@@ -13,7 +13,7 @@ import torch
 
 from gpt.config import PRESETS
 from gpt.data import CharTokenizer, load_text
-from gpt.train import DATA_PATH, OUT_DIR, build_model, pick_device
+from gpt.train import DATA_PATH, build_model, checkpoint_path, pick_device
 
 HELP = "コマンド: /temp <数値> 温度を変更 | /len <数値> 生成文字数を変更 | /quit 終了"
 
@@ -78,14 +78,14 @@ def main():
     p = argparse.ArgumentParser(description="学習済みGPTと対話する")
     p.add_argument("--preset", choices=["tiny", "small", "full"], default="small",
                    help="学習時と同じプリセットを指定する")
-    p.add_argument("--checkpoint", default=str(OUT_DIR / "gpt.pt"))
+    p.add_argument("--checkpoint", help="既定: out/gpt-<preset>.pt")
     p.add_argument("--length", type=int, default=300)
     p.add_argument("--temperature", type=float, default=0.8)
     args = p.parse_args()
 
     device = pick_device()
     tokenizer = CharTokenizer(load_text(DATA_PATH))
-    model = load_model(args.preset, args.checkpoint, tokenizer, device)
+    model = load_model(args.preset, args.checkpoint or checkpoint_path("gpt", args.preset), tokenizer, device)
     repl(model, tokenizer, device, {"length": args.length, "temperature": args.temperature})
 
 

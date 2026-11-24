@@ -21,17 +21,25 @@ ChatGPTは、この基盤モデルに指示追従・人間のフィードバッ�
 要[uv](https://docs.astral.sh/uv/)。依存関係は `pyproject.toml` で管理し、`uv.lock` で固定している。
 
 ```bash
-make setup       # uv sync で依存関係インストール(pyproject.toml)
-make test        # 単体テスト
-make bigram      # Phase 3: Bigramベースライン (val loss ≒ 2.5)
-make train-tiny  # GPTの動作確認 (数十秒)
-make train       # GPT学習 + 生成 (CPUで約2分, val loss ≒ 1.8)
-make train-full  # 動画相当の設定 (GPU推奨, val loss ≒ 1.5)
-make generate    # 保存済み out/gpt.pt で生成のみ
-make chat        # 学習済みモデルと対話するCLI(入力の続きを生成)
+make                 # 全自動: セットアップ → データ取得 → 学習 → 対話
+make PRESET=tiny     # 数十秒で試す (tiny / small / full)
+make train           # 学習のみ (学習済みならスキップ)
+make retrain         # 強制再学習
+make generate        # 学習済みモデルで生成のみ
+make bigram          # Phase 3: Bigramベースライン (val loss ≒ 2.5)
+make test            # 単体テスト
 ```
 
-`make train PRESET=tiny|small|full` でプリセットを切替。データ(tiny shakespeare)は `make data` で自動取得される。
+Makefile は依存関係(DAG)になっており、足りない工程だけ実行される。
+2回目以降は学習済みモデル `out/gpt-<preset>.pt` を再利用して、すぐ対話が始まる。
+
+```
+.venv/.synced ─┐
+data/input.txt ┼─> out/gpt-<preset>.pt ─> chat / generate
+gpt/*.py ──────┘
+```
+
+`small` はCPUで約2分(val loss ≒ 1.8)、`full` は動画相当の設定でGPU推奨(val loss ≒ 1.5)。
 
 ## 構成
 

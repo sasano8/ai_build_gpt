@@ -3,7 +3,7 @@
 使い方:
     python -m gpt.train --model gpt --preset small
     python -m gpt.train --model bigram
-    python -m gpt.train --generate-only --checkpoint out/gpt.pt
+    python -m gpt.train --generate-only --checkpoint out/gpt-small.pt
 """
 import argparse
 from pathlib import Path
@@ -17,6 +17,11 @@ from gpt.model import GPT
 
 DATA_PATH = "data/input.txt"
 OUT_DIR = Path("out")
+
+
+def checkpoint_path(model: str, preset: str) -> Path:
+    """モデルとプリセットごとに別ファイルへ保存する(Makefileの依存関係と対応)。"""
+    return OUT_DIR / f"{model}-{preset}.pt"
 
 
 def pick_device() -> str:
@@ -72,7 +77,7 @@ def parse_args():
     p.add_argument("--max-iters", type=int, help="presetのmax_itersを上書き")
     p.add_argument("--gen-tokens", type=int, default=500, help="生成するトークン数")
     p.add_argument("--generate-only", action="store_true", help="学習せず保存済みモデルで生成")
-    p.add_argument("--checkpoint", help="読み込み/保存先 (既定: out/<model>.pt)")
+    p.add_argument("--checkpoint", help="読み込み/保存先 (既定: out/<model>-<preset>.pt)")
     return p.parse_args()
 
 
@@ -83,7 +88,7 @@ def main():
         cfg = Config(**{**cfg.__dict__, "max_iters": args.max_iters})
     torch.manual_seed(cfg.seed)
     device = pick_device()
-    ckpt_path = Path(args.checkpoint or OUT_DIR / f"{args.model}.pt")
+    ckpt_path = Path(args.checkpoint or checkpoint_path(args.model, args.preset))
 
     text = load_text(DATA_PATH)
     tokenizer = CharTokenizer(text)
