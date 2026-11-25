@@ -17,7 +17,7 @@ BIGRAM  = out/bigram-bigram.pt
 TRAIN_SRC = gpt/config.py gpt/data.py gpt/model.py gpt/bigram.py gpt/train.py
 
 .DEFAULT_GOAL := chat
-.PHONY: help setup data test bigram train retrain generate chat clean
+.PHONY: help setup data test bigram train retrain generate chat estimate clean
 
 help:
 	@echo "make              全自動: セットアップ → データ取得 → 学習 → 対話 (= make chat)"
@@ -26,6 +26,7 @@ help:
 	@echo "make retrain      学習済みでも強制的に再学習"
 	@echo "make generate     学習済みモデルで文章を生成"
 	@echo "make bigram       Bigramベースラインを学習・生成"
+	@echo "make estimate    LLM学習の費用見積もり (PARAMS=7e9 [TOKENS=1e12])"
 	@echo "make test         単体テスト"
 	@echo "make clean        学習結果・キャッシュを削除"
 
@@ -59,6 +60,9 @@ retrain:
 
 generate: $(CKPT)
 	$(UV) python -m gpt.train --model gpt --preset $(PRESET) --generate-only
+
+estimate:
+	python3 scripts/estimate_cost.py --params $(PARAMS) $(if $(TOKENS),--tokens $(TOKENS))
 
 chat: $(CKPT)
 	$(UV) python -m gpt.chat --preset $(PRESET)
